@@ -1,0 +1,12 @@
+{
+  "description": "Demonstrating webRequests",
+  "manifest_version": 3,
+  "name": "webRequest-demo",
+  "version": "1.0",
+
+  "permissions": ["webRequest", ["https://robinhood.com/*"]],
+
+  "background": {
+    "service_worker": "background.js"
+  }
+}

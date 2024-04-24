@@ -19,3 +19,45 @@ model userRobinhoodTokens {
   token     String @unique
   accountId String @unique
 }
+
+model ExpertRobinTrades {
+  id              Int               @unique @default(autoincrement())
+  ref_id          String            @unique
+  expertId        String
+  AcccountId      String
+  createdAt       DateTime          @default(now())
+  UpdatedAt       DateTime          @updatedAt
+  retries         Int               @default(0)
+  Status          expertOrderStatus
+  strike_price    String
+  direction       Direction
+  ratio_quantity  Int
+  position_effect PositionEffect
+  expiration_date String
+  side            Side
+}
+
+enum Direction {
+  debit
+  credit
+}
+
+enum PositionEffect {
+  open
+  close
+}
+
+enum Side {
+  buy
+  sell
+}
+
+enum expertOrderStatus {
+  OPEN
+  DEAD
+}
+
+model AdminSub {
+  id     Int    @unique @default(autoincrement())
+  userid String @unique
+}

@@ -1,13 +1,12 @@
 const prisma = require("../db");
 const getChannel = require("../helper/getChannel");
-const placeOrder = require("../robinhood/placeOrderStocks");
+const placeOrder = require("../robinhood/order/placeOrderStocks");
 module.exports = {
   name: "hello",
   description: "Initial command",
   execute: async (client, message, ...args) => {
     const channel = getChannel(client, message);
 
-    // const accountid = args[0];
     const startTime = process.hrtime();
     await channel.send(
       "Trying to purchase APPL quantity one with your access token."
@@ -17,7 +16,10 @@ module.exports = {
         authorId: message.author.id,
       },
     });
-
+    if (!userTokenData)
+      return message.reply(
+        "You haven't setup your account. use !sub <account id> <access_token> "
+      );
     try {
       await placeOrder(
         userTokenData.token,

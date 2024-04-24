@@ -137,7 +137,7 @@ def order_buy_option_limit(optionType='both', account_number=None, timeInForce='
 
     payload = {
         "account": "https://api.robinhood.com/accounts/799908983/",
-        # "instrument": "https://api.robinhood.com/instruments/450dfc6d-5510-4d40-abfb-f633b7d9be3e/",
+        "instrument": "https://api.robinhood.com/instruments/450dfc6d-5510-4d40-abfb-f633b7d9be3e/",
         "quantity": 1,
         "price": "0.01",
         # "side": "buy",

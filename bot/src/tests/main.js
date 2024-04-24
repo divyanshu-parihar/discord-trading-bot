@@ -1,0 +1,17 @@
+const axios = require("axios");
+const headers = {
+  Authorization:
+    "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJkY3QiOjE3MTI5NDQzMjIsImRldmljZV9oYXNoIjoiMzYwMWI2NjliMTBjZTI1YTUyNTYyZjYyODk4N2ZjYmMiLCJleHAiOjE3MTU2MTI3MDAsImxldmVsMl9hY2Nlc3MiOmZhbHNlLCJtZXRhIjp7Im9pZCI6ImM4MlNIMFdaT3NhYk9YR1Ayc3hxY2ozNEZ4a3ZmbldSWkJLbEJqRlMiLCJvbiI6IlJvYmluaG9vZCJ9LCJvcHRpb25zIjp0cnVlLCJwb3MiOiJwIiwic2NvcGUiOiJpbnRlcm5hbCIsInNlcnZpY2VfcmVjb3JkcyI6W3siaGFsdGVkIjpmYWxzZSwic2VydmljZSI6Im51bW11c191cyIsInNoYXJkX2lkIjoxLCJzdGF0ZSI6ImF2YWlsYWJsZSJ9LHsiaGFsdGVkIjpmYWxzZSwic2VydmljZSI6ImJyb2tlYmFja191cyIsInNoYXJkX2lkIjo0LCJzdGF0ZSI6ImF2YWlsYWJsZSJ9XSwic3JtIjp7ImIiOnsiaGwiOmZhbHNlLCJyIjoidXMiLCJzaWQiOjR9LCJuIjp7ImhsIjpmYWxzZSwiciI6InVzIiwic2lkIjoxfX0sInRva2VuIjoiR1p0N3M0NncxY3dwR01Dd3Z3Y2l4Ulg5UUtEZFRvIiwidXNlcl9pZCI6IjkwNGY4N2EwLWViZWMtNDI5Ni1hMjA3LTIyOTdjMzNhMTM2YiIsInVzZXJfb3JpZ2luIjoiVVMifQ.YiDQHkU9HGsgjlzA3QyKHwzQYYTvs0Qjh28N2hRn5jlyvAIUw8M-lftgzxfI5jccFxxTHq1QJZY1G7g1BXcFEZ43CtZqrSiqV678OE25lDorC8RGysu0Lie7YxZGUarsPhcxFCIiK7H9_P8mkJW38tpEQZ1_3sLT36K5iK0HphtREwWn1JJhadfl24jxY2gLkIe2k8tjxG0ji2aUEeXSHKDxOKgpof98O0DB3ebr_ZAFLZuMCzsLjhQnu38AoWNtqVrSzz9yi0CC-GNBocYi2_A5SGo60nZmCcIycZH3Ne9EoYDjKuwQF5TBzXvw3pd2Mm7er3yZ9n8obrrO7OW44Q",
+};
+
+axios
+  .get(
+    "https://api.robinhood.com/options/instruments/?account_number=799908983&chain_id=7dd906e5-7d4b-4161-a3fe-2c3b62038482&expiration_dates=2024-04-19&state=active&type=call",
+    { headers }
+  )
+  .then((response) => {
+    // console.log(response.data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });

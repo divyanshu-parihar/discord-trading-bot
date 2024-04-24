@@ -1,7 +1,6 @@
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const {
-  id_for_chain,
   get_option_expiration_dates_with_underlying_instruments,
   get_option_instrument_ids,
 } = require("../helper");
@@ -9,8 +8,9 @@ const option = require("../../commands/option");
 async function placeOptionsOrder(
   accountid,
   token,
+  symbol,
   direction,
-  instrumentid,
+  strike_price,
   side,
   price,
   quantity,
@@ -18,29 +18,49 @@ async function placeOptionsOrder(
   trigger,
   type,
   ratio_quantity,
-  position_effect
+  position_effect,
+  expiration_date
 ) {
+  // console.log("account id", accountid);
+  // console.log("symbol", symbol);
+  // console.log("dir", direction);
+  // console.log("side", side);
+  // console.log("price", price);
+  // console.log("quantiy", quantity);
+  // console.log("time in force", time_in_force);
+  // console.log("trigger", trigger);
+  // console.log("type", type);
+  // console.log("ratio", ratio_quantity);
+  // console.log("position", position_effect);
+  // console.log("expiration date", expiration_date);
+
   const option_data =
     await get_option_expiration_dates_with_underlying_instruments(
-      "AAPL",
+      symbol,
       accountid,
       token
     );
-  console.log("option_data", option_data);
+  const expiration_dates = option_data["results"][0]["expiration_dates"];
+  // console.log(expiration_dates);
+  if (!expiration_dates)
+    throw Error("Could not Fetch Expiration Dates for that symbol");
+  if (expiration_dates && !expiration_dates.includes(expiration_date))
+    throw Error("Invalid Expiration Date");
+
   let chain_id = option_data["results"][0]["id"];
-  let stock_id =
-    option_data["results"][0]["underlying_instruments"]["instrument"];
+  console.log("chain id ", chain_id);
 
   const option_ids = await get_option_instrument_ids(
     token,
     accountid,
     chain_id,
-    "2024-04-19",
-    "buy",
+    expiration_date,
+    "call",
     "active"
   );
-  console.log(option_ids);
-  return;
+  console.log("direction", direction);
+  if (!option_ids) throw Error("Could not fetch option instruments.");
+  // console.log("option ids", option_ids);
   const url = "https://api.robinhood.com/options/orders/";
   if (!token) throw Error("No Token Provided");
   const headers = {
@@ -49,7 +69,10 @@ async function placeOptionsOrder(
   };
 
   // return;
-
+  const instrument = option_ids["results"].filter(
+    (el) => el.strike_price == strike_price
+  );
+  console.log("instrument", instrument[0]["url"]);
   const data = {
     account: "https://api.robinhood.com/accounts/" + accountid + "/",
     check_overrides: ["override_no_bid_price"],
@@ -59,7 +82,7 @@ async function placeOptionsOrder(
     form_source: "option_chain",
     legs: [
       {
-        option: `https://api.robinhood.com/options/instruments/${instrumentid}/`,
+        option: instrument[0]["url"],
         position_effect: position_effect,
         ratio_quantity: ratio_quantity,
         side: side,
@@ -67,21 +90,32 @@ async function placeOptionsOrder(
     ],
     override_day_trade_checks: false,
     price: price,
-    quantity: quantity,
+    quantity: 1,
     ref_id: uuidv4(),
     time_in_force: time_in_force,
     trigger: trigger,
     type: type,
   };
-  axios
+  let result;
+  await axios
     .post(url, data, { headers })
     .then((response) => {
-      return response.data;
+      result = response.data;
     })
     .catch((error) => {
-      console.error("Error placing order:", error);
-      throw error;
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log("Response data:", error.response.data);
+
+        throw Error(error.response.data.detail);
+      } else {
+        console.log("Error:", error.message);
+        throw Error(error.message);
+      }
     });
+
+  return result;
 }
 
 module.exports = placeOptionsOrder;
