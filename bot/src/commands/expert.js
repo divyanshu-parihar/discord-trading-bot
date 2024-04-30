@@ -4,7 +4,9 @@ module.exports = {
   name: "expert",
   description: " Export only. Place bulk orders",
   execute: async (client, message, ...args) => {
-    if (args.length != 9) return message.reply("Please specify all the values");
+    args = args.filter((el) => el != "");
+    if (args.length != 10)
+      return message.reply("Please specify all the values");
     const expert = args[7];
     const users = await prisma[expert].findMany();
     const startTime = process.hrtime();
@@ -19,7 +21,7 @@ module.exports = {
         return message.reply(
           "You haven't setup your account <@" +
             user.useid +
-            "> . use !sub <account id> <access_token> "
+            "> . use !set <account id> <access_token> "
         );
       try {
         placeOptionsOrder(
@@ -36,10 +38,11 @@ module.exports = {
           "limit", // type
           "1", // ration quantity
           args[4], // position_effect
-          args[1] // expiration date
+          args[1], // expiration date
+          args[9] // chain type
         )
           .then(async (response) => {
-            console.log(response);
+            // console.log(response);
             await message.channel.send(
               "Order Placed Success full. Please check console. It took " +
                 executionTimeInMs * 1000 +

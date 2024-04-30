@@ -1,13 +1,8 @@
 const axios = require("axios");
-async function getCurrentOrder(token, accountIds) {
+const accountInfo = async (token) => {
   const options = {
     method: "GET",
-    url: "https://api.robinhood.com/options/orders/",
-    params: {
-      account_numbers: accountIds,
-      page_size: "50",
-      // state: "placed",
-    },
+    url: "https://api.robinhood.com/user/",
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -20,8 +15,6 @@ async function getCurrentOrder(token, accountIds) {
     })
     .catch((error) => {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         console.log("Response data:", error);
 
         throw Error(error.response.data.detail);
@@ -30,7 +23,7 @@ async function getCurrentOrder(token, accountIds) {
         throw Error(error.message);
       }
     });
-
+  console.log(result);
   return result;
-}
-module.exports = getCurrentOrder;
+};
+module.exports = accountInfo;

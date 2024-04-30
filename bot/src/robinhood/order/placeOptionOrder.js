@@ -4,7 +4,7 @@ const {
   get_option_expiration_dates_with_underlying_instruments,
   get_option_instrument_ids,
 } = require("../helper");
-const option = require("../../commands/option");
+// const option = require("../../commands/option");
 async function placeOptionsOrder(
   accountid,
   token,
@@ -19,7 +19,9 @@ async function placeOptionsOrder(
   type,
   ratio_quantity,
   position_effect,
-  expiration_date
+  expiration_date,
+
+  chain_type = "call"
 ) {
   // console.log("account id", accountid);
   // console.log("symbol", symbol);
@@ -42,23 +44,24 @@ async function placeOptionsOrder(
     );
   const expiration_dates = option_data["results"][0]["expiration_dates"];
   // console.log(expiration_dates);
+  // console.log(expiration_date);
   if (!expiration_dates)
     throw Error("Could not Fetch Expiration Dates for that symbol");
   if (expiration_dates && !expiration_dates.includes(expiration_date))
     throw Error("Invalid Expiration Date");
 
   let chain_id = option_data["results"][0]["id"];
-  console.log("chain id ", chain_id);
+  // console.log("chain id ", chain_id);
 
   const option_ids = await get_option_instrument_ids(
     token,
     accountid,
     chain_id,
     expiration_date,
-    "call",
+    chain_type,
     "active"
   );
-  console.log("direction", direction);
+  // console.log("direction", direction);
   if (!option_ids) throw Error("Could not fetch option instruments.");
   // console.log("option ids", option_ids);
   const url = "https://api.robinhood.com/options/orders/";
@@ -72,7 +75,7 @@ async function placeOptionsOrder(
   const instrument = option_ids["results"].filter(
     (el) => el.strike_price == strike_price
   );
-  console.log("instrument", instrument[0]["url"]);
+  // console.log("instrument", instrument[0]["url"]);
   const data = {
     account: "https://api.robinhood.com/accounts/" + accountid + "/",
     check_overrides: ["override_no_bid_price"],
@@ -100,9 +103,11 @@ async function placeOptionsOrder(
   await axios
     .post(url, data, { headers })
     .then((response) => {
+      console.log(response.data);
       result = response.data;
     })
     .catch((error) => {
+      // console.log(error.response.data);
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx

@@ -35,8 +35,12 @@ model ExpertRobinTrades {
   position_effect PositionEffect
   expiration_date String
   side            Side
+  price           String
 }
 
+// model Order{
+//   refi
+// }
 enum Direction {
   debit
   credit

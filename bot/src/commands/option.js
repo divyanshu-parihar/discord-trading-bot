@@ -1,5 +1,5 @@
-const placeOptionsOrder = require("bot/src/robinhood/order/placeOptionOrder.js");
 const getChannel = require("../helper/getChannel");
+const placeOptionsOrder = require("../robinhood/order/placeOptionOrder");
 const prisma = require("../db");
 const memberRole = require("../helper/checkRole");
 module.exports = {
@@ -25,8 +25,8 @@ module.exports = {
       );
     try {
       const result = await placeOptionsOrder(
-        "799908983",
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJkY3QiOjE3MTI5NDQzMjIsImRldmljZV9oYXNoIjoiMzYwMWI2NjliMTBjZTI1YTUyNTYyZjYyODk4N2ZjYmMiLCJleHAiOjE3MTU2MTI3MDAsImxldmVsMl9hY2Nlc3MiOmZhbHNlLCJtZXRhIjp7Im9pZCI6ImM4MlNIMFdaT3NhYk9YR1Ayc3hxY2ozNEZ4a3ZmbldSWkJLbEJqRlMiLCJvbiI6IlJvYmluaG9vZCJ9LCJvcHRpb25zIjp0cnVlLCJwb3MiOiJwIiwic2NvcGUiOiJpbnRlcm5hbCIsInNlcnZpY2VfcmVjb3JkcyI6W3siaGFsdGVkIjpmYWxzZSwic2VydmljZSI6Im51bW11c191cyIsInNoYXJkX2lkIjoxLCJzdGF0ZSI6ImF2YWlsYWJsZSJ9LHsiaGFsdGVkIjpmYWxzZSwic2VydmljZSI6ImJyb2tlYmFja191cyIsInNoYXJkX2lkIjo0LCJzdGF0ZSI6ImF2YWlsYWJsZSJ9XSwic3JtIjp7ImIiOnsiaGwiOmZhbHNlLCJyIjoidXMiLCJzaWQiOjR9LCJuIjp7ImhsIjpmYWxzZSwiciI6InVzIiwic2lkIjoxfX0sInRva2VuIjoiR1p0N3M0NncxY3dwR01Dd3Z3Y2l4Ulg5UUtEZFRvIiwidXNlcl9pZCI6IjkwNGY4N2EwLWViZWMtNDI5Ni1hMjA3LTIyOTdjMzNhMTM2YiIsInVzZXJfb3JpZ2luIjoiVVMifQ.YiDQHkU9HGsgjlzA3QyKHwzQYYTvs0Qjh28N2hRn5jlyvAIUw8M-lftgzxfI5jccFxxTHq1QJZY1G7g1BXcFEZ43CtZqrSiqV678OE25lDorC8RGysu0Lie7YxZGUarsPhcxFCIiK7H9_P8mkJW38tpEQZ1_3sLT36K5iK0HphtREwWn1JJhadfl24jxY2gLkIe2k8tjxG0ji2aUEeXSHKDxOKgpof98O0DB3ebr_ZAFLZuMCzsLjhQnu38AoWNtqVrSzz9yi0CC-GNBocYi2_A5SGo60nZmCcIycZH3Ne9EoYDjKuwQF5TBzXvw3pd2Mm7er3yZ9n8obrrO7OW44Q",
+        userTokenData.accountId,
+        userTokenData.token,
         args[0], // symbol
         args[7], // direction
         args[2],
@@ -50,9 +50,16 @@ module.exports = {
       );
     } catch (e) {
       console.log(e.message);
-      await channel.send(
-        "Wasn't able to place order." + "\n" + "REASON : " + e.message
-      );
+
+      if (e.response.data == "token revoked") {
+        await channel.send(
+          "[TOKEN REVOKED] : SOLUTION: Please update your token."
+        );
+      } else {
+        await channel.send(
+          "Wasn't able to place order." + "\n" + "REASON : " + e.message
+        );
+      }
     }
   },
 };
