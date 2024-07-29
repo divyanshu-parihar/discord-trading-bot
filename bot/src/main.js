@@ -296,7 +296,7 @@ function main() {
     console.log("count", count++, Date.now());
   }, 5000);
   client.login(
-    "MTIyODcwMjkxODE0NDY5MjI4NQ.G_-4M9.Yi1dnemYJ2xy7PXCfyb5Xn-teI0IC2Nr_ecIh4"
+    ""
   );
 }
 
